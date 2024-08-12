@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using TCRCore;
 using TCRCore.Command;
 using TShockAPI;
@@ -32,12 +33,23 @@ namespace TCRTShock.Commands
 		}
 	}
 
-	public class ConsoleRunner : TSPlayer
+	public class ConsoleRunner : TSServerPlayer
 	{
-		public ConsoleRunner(string player = "Server") : base(player) 
-			=> Group = new SuperAdminGroup();
+		public ConsoleRunner(string player = "Server") { }
 
 		public override void SendMessage(string msg, byte red, byte green, byte blue)
+			=> TCRCore.Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, msg);
+
+		public override void SendInfoMessage(string msg)
+			=> TCRCore.Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, msg);
+
+		public override void SendErrorMessage(string msg)
+			=> TCRCore.Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, msg);
+
+		public override void SendSuccessMessage(string msg)
+			=> TCRCore.Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, msg);
+
+		public override void SendWarningMessage(string msg)
 			=> TCRCore.Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, msg);
 	}
 }

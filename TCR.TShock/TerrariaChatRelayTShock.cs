@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using OTAPI;
 using System;
 using System.Collections.Generic;
@@ -156,20 +156,19 @@ namespace TCRTShock
 			if (TShock.Players[args.Who].mute == true)
 				return;
 
-			/*
-			var snippets = ChatManager.ParseMessage(text, Color.White);
+
+			var snippets = Terraria.UI.Chat.ChatManager.ParseMessage(text, Color.White);
 
 			string outmsg = "";
 			foreach (var snippet in snippets)
 			{
 				outmsg += snippet.Text;
 			}
-			*/
 
 			ChatHolder.Add(new Chatter()
 			{
 				Player = Main.player[args.Who].ToTCRPlayer(args.Who),
-				Text = $"{text}"
+				Text = text
 			});
 
 			Core.RaiseTerrariaMessageReceived(this, Main.player[args.Who].ToTCRPlayer(args.Who), text);
@@ -239,10 +238,8 @@ namespace TCRTShock
 		private void OnServerBroadcast(ServerBroadcastEventArgs args)
 		{
 			var literalText = Language.GetText(args.Message._text).Value;
-			
 			if (args.Message._substitutions?.Length > 0)
 				literalText = string.Format(literalText, args.Message._substitutions);
-			
 			if (
 				literalText.EndsWith(" has joined.") || // User joined
 				literalText.EndsWith(" has left.") || // User left
@@ -250,7 +247,6 @@ namespace TCRTShock
 													 //Regex.IsMatch(literalText, @".*?:\s+.*") // Chat
 				)
 				return;
-			
 			var CheckChat = ChatHolder.Where(x => literalText.Contains(x.Player.Name) && literalText.Contains(x.Text));
 			if (CheckChat.Count() > 0)
 			{
