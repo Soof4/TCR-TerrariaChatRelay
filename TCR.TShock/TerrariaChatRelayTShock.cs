@@ -157,7 +157,7 @@ namespace TCRTShock
 				return;
 
 
-			var snippets = Terraria.UI.Chat.ChatManager.ParseMessage(text, Color.White);
+			var snippets = ChatManager.ParseMessage(text, Color.White);
 
 			string outmsg = "";
 			foreach (var snippet in snippets)
