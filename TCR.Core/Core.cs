@@ -19,7 +19,7 @@ namespace TCRCore
 
 		public static Version TCRVersion { get; set; } = new Version(2, 0, 0);
 
-        public static event EventHandler<TerrariaChatEventArgs> OnGameMessageReceived;
+		public static event EventHandler<TerrariaChatEventArgs> OnGameMessageReceived;
 		public static event EventHandler<ClientChatEventArgs> OnClientMessageReceived;
 
 		private static ITCRAdapter _adapter;
@@ -61,7 +61,7 @@ namespace TCRCore
 		/// <param name="sourceChannelId">Optional id for clients that require id's to send to channels. Id of the channel the message originated from.</param>
 		public static void RaiseClientMessageReceived(object sender, TCRClientUser user, string clientName, string clientPrefix, string msg, string commandPrefix, string sourceChannelId = "")
 		{
-			if(CommandServ.IsCommand(msg, commandPrefix))
+			if (CommandServ.IsCommand(msg, commandPrefix))
 			{
 				var payload = CommandServ.GetExecutableCommand(msg, commandPrefix, user);
 				msg = payload.Execute(sender);
@@ -69,7 +69,12 @@ namespace TCRCore
 			}
 			else
 			{
-				_adapter.BroadcastChatMessage($"{clientPrefix}<{user.Username}> {msg}", -1);
+				string formattedMsg = Global.Config.InGameChatFormat;
+				formattedMsg = formattedMsg.Replace("%prefix%", clientPrefix);
+				formattedMsg = formattedMsg.Replace("%username%", user.Username);
+				formattedMsg = formattedMsg.Replace("%message%", msg);
+
+				_adapter.BroadcastChatMessage(formattedMsg, -1);
 				OnClientMessageReceived?.Invoke(sender, new ClientChatEventArgs(clientName, user, msg));
 			}
 		}
@@ -93,10 +98,10 @@ namespace TCRCore
 		/// <param name="color">Color to display the text.</param>
 		/// <param name="msg">Text content of the message</param>
 		public static void RaiseTerrariaMessageReceived(object sender, TCRPlayer player, TCRColor color, string msg)
-            => OnGameMessageReceived?.Invoke(sender, new TerrariaChatEventArgs(player, color, msg));
+			=> OnGameMessageReceived?.Invoke(sender, new TerrariaChatEventArgs(player, color, msg));
 
 		public static void ConnectClients()
-        {
+		{
 			PrettyPrint.Log("Connecting clients...", ConsoleColor.Cyan);
 
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -126,15 +131,15 @@ namespace TCRCore
 			{
 				PrettyPrint.Log(Subscribers[i].GetType().Assembly.GetName().Name.ToString() + " Connecting...", ConsoleColor.Cyan);
 				Subscribers[i].ConnectAsync();
-            }
+			}
 			Console.ResetColor();
-        }
+		}
 
-        public static void DisconnectClients()
-        {
+		public static void DisconnectClients()
+		{
 			var i = 0;
-            while (i < Subscribers.Count)
-            {
+			while (i < Subscribers.Count)
+			{
 				i++;
 				var subcriberName = Subscribers[0].GetType().ToString();
 				try
@@ -159,14 +164,14 @@ namespace TCRCore
 			}
 
 			Subscribers.Clear();
-        }
-    }
+		}
+	}
 
-    public class TerrariaChatEventArgs : EventArgs
-    {
-        public TCRPlayer Player { get; set; }
-        public TCRColor Color { get; set; }
-        public string Message { get; set; }
+	public class TerrariaChatEventArgs : EventArgs
+	{
+		public TCRPlayer Player { get; set; }
+		public TCRColor Color { get; set; }
+		public string Message { get; set; }
 
 		/// <summary>
 		/// Message payload sent to subscribers when a game message has been received.
@@ -176,12 +181,12 @@ namespace TCRCore
 		/// 
 		/// <param name="msg">Text content of the message</param>
 		public TerrariaChatEventArgs(TCRPlayer player, TCRColor color, string msg)
-        {
+		{
 			Player = player;
 			Color = color;
-            Message = msg;
+			Message = msg;
 		}
-    }
+	}
 
 	public class ClientChatEventArgs : EventArgs
 	{

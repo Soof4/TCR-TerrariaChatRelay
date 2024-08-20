@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.Localization;
 using Terraria.Net;
-using Terraria.UI.Chat;
 using TerrariaApi.Server;
 using TCRCore;
 using TCRCore.Helpers;
@@ -156,15 +155,6 @@ namespace TCRTShock
 			if (TShock.Players[args.Who].mute == true)
 				return;
 
-
-			var snippets = ChatManager.ParseMessage(text, Color.White);
-
-			string outmsg = "";
-			foreach (var snippet in snippets)
-			{
-				outmsg += snippet.Text;
-			}
-
 			ChatHolder.Add(new Chatter()
 			{
 				Player = Main.player[args.Who].ToTCRPlayer(args.Who),
@@ -238,8 +228,10 @@ namespace TCRTShock
 		private void OnServerBroadcast(ServerBroadcastEventArgs args)
 		{
 			var literalText = Language.GetText(args.Message._text).Value;
+
 			if (args.Message._substitutions?.Length > 0)
 				literalText = string.Format(literalText, args.Message._substitutions);
+
 			if (
 				literalText.EndsWith(" has joined.") || // User joined
 				literalText.EndsWith(" has left.") || // User left
@@ -247,7 +239,9 @@ namespace TCRTShock
 													 //Regex.IsMatch(literalText, @".*?:\s+.*") // Chat
 				)
 				return;
+
 			var CheckChat = ChatHolder.Where(x => literalText.Contains(x.Player.Name) && literalText.Contains(x.Text));
+
 			if (CheckChat.Count() > 0)
 			{
 				ChatHolder.Remove(CheckChat.First());
@@ -256,12 +250,6 @@ namespace TCRTShock
 
 			Core.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, literalText);
 		}
-
-		//private void OnBroadcastMessage(NetworkText text, ref Color color, ref int ignorePlayer)
-		//{
-		//	var literalText = Language.GetText(text._text).Value;
-		//	TCRCore.RaiseTerrariaMessageReceived(this, TCRPlayer.Server, string.Format(literalText, text._substitutions));
-		//}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -286,7 +274,6 @@ namespace TCRTShock
 			}
 			base.Dispose(disposing);
 		}
-
 
 		/// <summary>
 		/// <para>Loads the build.txt from GitHub to check if there is a newer version of TCR available. </para>

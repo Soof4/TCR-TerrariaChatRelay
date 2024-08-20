@@ -17,10 +17,11 @@ namespace TCRCore
         // TerrariaChatRelay
         public bool ShowChatMessages { get; set; } = true;
         public bool ShowGameEvents { get; set; } = true;
-		public bool ShowServerStartMessage { get; set; } = true;
-		public bool ShowServerStopMessage { get; set; } = true;
+        public bool ShowServerStartMessage { get; set; } = true;
+        public bool ShowServerStopMessage { get; set; } = true;
         public bool ShowWorldSeed { get; set; } = false;
-		public bool CheckForLatestVersion { get; set; } = true;
+        public bool CheckForLatestVersion { get; set; } = true;
+        public string InGameChatFormat { get; set; } = "%prefix% <%username%> %message%";
 
         public TCRConfig()
         {
